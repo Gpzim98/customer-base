@@ -1,3 +1,10 @@
 from django.shortcuts import render
+from rest_framework import viewsets
 
-# Create your views here.
+from .models import Costumer
+from .serializers import CostumerSerializer
+
+
+class CostumerViewSet(viewsets.ModelViewSet):
+    queryset = Costumer.objects.all()
+    serializer_class = CostumerSerializer

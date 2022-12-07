@@ -9,6 +9,9 @@ class DataSheet(models.Model):
     description = models.CharField(max_length=50)
     historical_data = models.TextField()
 
+    def __str__(self):
+        return self.description
+
 
 class Costumer(models.Model):
     name = models.CharField(max_length=50)
