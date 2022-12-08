@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from rest_framework import viewsets
 from rest_framework.response import Response
+from django.http.response import HttpResponseForbidden
 
 from .models import (
     Custumer,
@@ -17,7 +18,6 @@ from .serializers import (
 )
 
 
-
 class CustumerViewSet(viewsets.ModelViewSet):
     serializer_class = CustumerSerializer
 
@@ -26,10 +26,14 @@ class CustumerViewSet(viewsets.ModelViewSet):
         return active_custumers
 
     def list(self, request, *args, **kwargs):
-        import pdb; pdb.set_trace()
         custumers = Custumer.objects.filter(id=2)
         serializer = CustumerSerializer(custumers, many=True)
         return Response(serializer.data)
+
+    def retrieve(self, request, *args, **kwargs):
+        # obj = self.get_object()
+        # serializer = CustumerSerializer(obj)
+        return HttpResponseForbidden('Not Allowed')
 
 
 class ProfessionViewSet(viewsets.ModelViewSet):
