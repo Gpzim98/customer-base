@@ -13,7 +13,7 @@ class DataSheet(models.Model):
         return self.description
 
 
-class Costumer(models.Model):
+class Custumer(models.Model):
     name = models.CharField(max_length=50)
     address = models.CharField(max_length=50)
     professions = models.ManyToManyField(Profession)
@@ -35,7 +35,7 @@ class Document(models.Model):
 
     dtype = models.CharField(choices=DOC_TYPES, max_length=2)
     doc_number = models.CharField(max_length=50)
-    custumer = models.ForeignKey(Costumer, on_delete=models.CASCADE)
+    custumer = models.ForeignKey(Custumer, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.doc_number
