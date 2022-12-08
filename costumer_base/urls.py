@@ -23,7 +23,7 @@ from core.views import (CustumerViewSet,
                         )
 
 router = routers.DefaultRouter()
-router.register(r'custumers', CustumerViewSet)
+router.register(r'custumers', CustumerViewSet, basename="custumer")
 router.register(r'professions', ProfessionViewSet)
 router.register(r'data-sheet', DataSheetViewSet)
 router.register(r'documents', DocumentViewSet)

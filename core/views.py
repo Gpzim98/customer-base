@@ -17,8 +17,11 @@ from .serializers import (
 
 
 class CustumerViewSet(viewsets.ModelViewSet):
-    queryset = Custumer.objects.all()
     serializer_class = CustumerSerializer
+
+    def get_queryset(self):
+        active_custumers = Custumer.objects.filter(active=True)
+        return active_custumers
 
 
 class ProfessionViewSet(viewsets.ModelViewSet):
