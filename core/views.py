@@ -26,7 +26,7 @@ class CustumerViewSet(viewsets.ModelViewSet):
         return active_custumers
 
     def list(self, request, *args, **kwargs):
-        custumers = Custumer.objects.filter(id=2)
+        custumers = Custumer.objects.all()
         serializer = CustumerSerializer(custumers, many=True)
         return Response(serializer.data)
 
@@ -38,6 +38,23 @@ class CustumerViewSet(viewsets.ModelViewSet):
         custumer = Custumer.objects.create(
             name=data['name'], address=data['address'], data_sheet_id=data['data_sheet']
         )
+        profession = Profession.objects.get(id=data['profession'])
+
+        for p in custumer.professions.all():
+            custumer.professions.remove(p)
+        custumer.professions.add(profession)
+        custumer.save()
+
+        serializer = CustumerSerializer(custumer)
+        return Response(serializer.data)
+
+    def update(self, request, *args, **kwargs):
+        custumer = self.get_object()
+        data = request.data
+        custumer.name = data['name']
+        custumer.address = data['address']
+        custumer.data_sheet_id = data['data_sheet']
+
         profession = Profession.objects.get(id=data['profession'])
 
         custumer.professions.add(profession)
