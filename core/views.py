@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework import viewsets
 from rest_framework.response import Response
-from django.http.response import HttpResponseForbidden
+from django.http.response import HttpResponseForbidden, HttpResponseNotAllowed
 
 from .models import (
     Custumer,
@@ -31,9 +31,20 @@ class CustumerViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def retrieve(self, request, *args, **kwargs):
-        # obj = self.get_object()
-        # serializer = CustumerSerializer(obj)
-        return HttpResponseForbidden('Not Allowed')
+        return HttpResponseNotAllowed('Not Allowed')
+
+    def create(self, request, *args, **kwargs):
+        data = request.data
+        custumer = Custumer.objects.create(
+            name=data['name'], address=data['address'], data_sheet_id=data['data_sheet']
+        )
+        profession = Profession.objects.get(id=data['profession'])
+
+        custumer.professions.add(profession)
+        custumer.save()
+
+        serializer = CustumerSerializer(custumer)
+        return Response(serializer.data)
 
 
 class ProfessionViewSet(viewsets.ModelViewSet):
