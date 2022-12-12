@@ -26,11 +26,14 @@ class CustumerViewSet(viewsets.ModelViewSet):
         return active_custumers
 
     def list(self, request, *args, **kwargs):
-        custumers = Custumer.objects.all()
+        custumers = Custumer.objects.filter(id=3)
         serializer = CustumerSerializer(custumers, many=True)
         return Response(serializer.data)
 
     def retrieve(self, request, *args, **kwargs):
+        custumer = self.get_object()
+        serializer = CustumerSerializer(custumer)
+        return Response(serializer.data)
         return HttpResponseNotAllowed('Not Allowed')
 
     def create(self, request, *args, **kwargs):
@@ -73,6 +76,10 @@ class CustumerViewSet(viewsets.ModelViewSet):
         serializer = CustumerSerializer(custumer)
         return Response(serializer.data)
 
+    def destroy(self, request, *args, **kwargs):
+        custumer = self.get_object()
+        custumer.delete()
+        return Response('Removed')
 
 class ProfessionViewSet(viewsets.ModelViewSet):
     queryset = Profession.objects.all()
