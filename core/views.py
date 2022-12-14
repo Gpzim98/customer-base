@@ -3,117 +3,121 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from django.http.response import HttpResponseForbidden, HttpResponseNotAllowed
-
 from .models import (
-    Custumer,
+    Customer,
     Profession,
     DataSheet, Document
 )
 
 from .serializers import (
-    CustumerSerializer,
+    CustomerSerializer,
     ProfessionSerializer,
     DataSheetSerializer,
     DocumentSerializer,
-
 )
 
 
-class CustumerViewSet(viewsets.ModelViewSet):
-    serializer_class = CustumerSerializer
+class CustomerViewSet(viewsets.ModelViewSet):
+    serializer_class = CustomerSerializer
 
     def get_queryset(self):
-        active_custumers = Custumer.objects.filter(active=True)
-        return active_custumers
+        id = self.request.query_params.get('id', None)
+        status = True if self.request.query_params['active'] == 'True' else False
+        if id:
+            customers = Customer.objects.filter(id=id, active=status)
+        else:
+            customers = Customer.objects.filter(active=status)
+
+        return customers
 
     def list(self, request, *args, **kwargs):
-        custumers = Custumer.objects.all()
-        serializer = CustumerSerializer(custumers, many=True)
+        customers = self.get_queryset()
+        serializer = CustomerSerializer(customers, many=True)
         return Response(serializer.data)
 
     def retrieve(self, request, *args, **kwargs):
-        custumer = self.get_object()
-        serializer = CustumerSerializer(custumer)
+        customer = self.get_object()
+        serializer = CustomerSerializer(customer)
         return Response(serializer.data)
         return HttpResponseNotAllowed('Not Allowed')
 
     def create(self, request, *args, **kwargs):
         data = request.data
-        custumer = Custumer.objects.create(
+        customer = Customer.objects.create(
             name=data['name'], address=data['address'], data_sheet_id=data['data_sheet']
         )
         profession = Profession.objects.get(id=data['profession'])
 
-        for p in custumer.professions.all():
-            custumer.professions.remove(p)
-        custumer.professions.add(profession)
-        custumer.save()
+        for p in customer.professions.all():
+            customer.professions.remove(p)
+        customer.professions.add(profession)
+        customer.save()
 
-        serializer = CustumerSerializer(custumer)
+        serializer = CustomerSerializer(customer)
         return Response(serializer.data)
 
     def update(self, request, *args, **kwargs):
-        custumer = self.get_object()
+        customer = self.get_object()
         data = request.data
-        custumer.name = data['name']
-        custumer.address = data['address']
-        custumer.data_sheet_id = data['data_sheet']
+        customer.name = data['name']
+        customer.address = data['address']
+        customer.data_sheet_id = data['data_sheet']
 
         profession = Profession.objects.get(id=data['profession'])
 
-        custumer.professions.add(profession)
-        custumer.save()
+        customer.professions.add(profession)
+        customer.save()
 
-        serializer = CustumerSerializer(custumer)
+        serializer = CustomerSerializer(customer)
         return Response(serializer.data)
 
     def partial_update(self, request, *args, **kwargs):
-        custumer = self.get_object()
-        custumer.name = request.data.get('name', custumer.name)
-        custumer.address = request.data.get('address', custumer.address)
-        custumer.data_sheet_id = request.data.get('data_sheet', custumer.data_sheet_id)
+        customer = self.get_object()
+        customer.name = request.data.get('name', customer.name)
+        customer.address = request.data.get('address', customer.address)
+        customer.data_sheet_id = request.data.get('data_sheet', customer.data_sheet_id)
 
-        custumer.save()
-        serializer = CustumerSerializer(custumer)
+        customer.save()
+        serializer = CustomerSerializer(customer)
         return Response(serializer.data)
 
     def destroy(self, request, *args, **kwargs):
-        custumer = self.get_object()
-        custumer.delete()
+        customer = self.get_object()
+        customer.delete()
         return Response('Removed')
 
     @action(detail=True)
     def deactivate(self, request, **kwards):
-        custumer = self.get_object()
-        custumer.active = False
-        custumer.save()
-        serializer = CustumerSerializer(custumer)
+        customer = self.get_object()
+        customer.active = False
+        customer.save()
+        serializer = CustomerSerializer(customer)
         return Response(serializer.data)
 
     @action(detail=False)
     def deactivate_all(self, request, **kwards):
-        custumers = Custumer.objects.all()
-        custumers.update(active=False)
+        customers = self.get_queryset()
+        customers.update(active=False)
 
-        serializer = CustumerSerializer(custumers, many=True)
+        serializer = CustomerSerializer(customers, many=True)
         return Response(serializer.data)
 
     @action(detail=False)
     def activate_all(self, request, **kwards):
-        custumers = Custumer.objects.all()
-        custumers.update(active=True)
+        customers = self.get_queryset()
+        customers.update(active=True)
 
-        serializer = CustumerSerializer(custumers, many=True)
+        serializer = CustomerSerializer(customers, many=True)
         return Response(serializer.data)
 
     @action(detail=False, methods=['POST'])
     def change_status(self, request, **kwards):
         status = True if request.data['active'] == 'True' else False
 
-        custumers = Custumer.objects.all()
-        custumers.update(active=status)
+        customers = self.get_queryset()
+        customers.update(active=status)
 
-        serializer = CustumerSerializer(custumers, many=True)
+        serializer = CustomerSerializer(customers, many=True)
         return Response(serializer.data)
 
 

@@ -16,14 +16,14 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
-from core.views import (CustumerViewSet,
+from core.views import (CustomerViewSet,
                         ProfessionViewSet,
                         DataSheetViewSet,
                         DocumentViewSet,
                         )
 
 router = routers.DefaultRouter()
-router.register(r'custumers', CustumerViewSet, basename="custumer")
+router.register(r'customers', CustomerViewSet, basename="customer")
 router.register(r'professions', ProfessionViewSet)
 router.register(r'data-sheet', DataSheetViewSet)
 router.register(r'documents', DocumentViewSet)

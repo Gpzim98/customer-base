@@ -1,15 +1,15 @@
 from rest_framework import serializers
 from .models import (
-    Custumer,
+    Customer,
     Profession,
     Document,
     DataSheet
 )
 
 
-class CustumerSerializer(serializers.ModelSerializer):
+class CustomerSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Custumer
+        model = Customer
         fields = ['id', 'name', 'address', 'professions', 'data_sheet', 'active']
 
 
@@ -28,4 +28,4 @@ class DataSheetSerializer(serializers.ModelSerializer):
 class DocumentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Document
-        fields = ['id', 'dtype', 'doc_number', 'custumer']
+        fields = ['id', 'dtype', 'doc_number', 'customer']
