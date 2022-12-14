@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from rest_framework import viewsets
 from rest_framework.response import Response
+from rest_framework.decorators import action
 from django.http.response import HttpResponseForbidden, HttpResponseNotAllowed
 
 from .models import (
@@ -26,7 +27,7 @@ class CustumerViewSet(viewsets.ModelViewSet):
         return active_custumers
 
     def list(self, request, *args, **kwargs):
-        custumers = Custumer.objects.filter(id=3)
+        custumers = Custumer.objects.all()
         serializer = CustumerSerializer(custumers, many=True)
         return Response(serializer.data)
 
@@ -80,6 +81,41 @@ class CustumerViewSet(viewsets.ModelViewSet):
         custumer = self.get_object()
         custumer.delete()
         return Response('Removed')
+
+    @action(detail=True)
+    def deactivate(self, request, **kwards):
+        custumer = self.get_object()
+        custumer.active = False
+        custumer.save()
+        serializer = CustumerSerializer(custumer)
+        return Response(serializer.data)
+
+    @action(detail=False)
+    def deactivate_all(self, request, **kwards):
+        custumers = Custumer.objects.all()
+        custumers.update(active=False)
+
+        serializer = CustumerSerializer(custumers, many=True)
+        return Response(serializer.data)
+
+    @action(detail=False)
+    def activate_all(self, request, **kwards):
+        custumers = Custumer.objects.all()
+        custumers.update(active=True)
+
+        serializer = CustumerSerializer(custumers, many=True)
+        return Response(serializer.data)
+
+    @action(detail=False, methods=['POST'])
+    def change_status(self, request, **kwards):
+        status = True if request.data['active'] == 'True' else False
+
+        custumers = Custumer.objects.all()
+        custumers.update(active=status)
+
+        serializer = CustumerSerializer(custumers, many=True)
+        return Response(serializer.data)
+
 
 class ProfessionViewSet(viewsets.ModelViewSet):
     queryset = Profession.objects.all()
