@@ -19,26 +19,26 @@ from .serializers import (
 
 class CustomerViewSet(viewsets.ModelViewSet):
     serializer_class = CustomerSerializer
+    filterset_fields = ('name', )
 
     def get_queryset(self):
         address = self.request.query_params.get('address', None)
 
-        if self.request.query_params.get('active') == 'True':
-            status = True
-        else:
+        if self.request.query_params.get('active') == 'False':
             status = False
+        else:
+            status = True
 
         if address:
             customers = Customer.objects.filter(address__icontains=address, active=status)
         else:
             customers = Customer.objects.filter(active=status)
-
         return customers
 
-    def list(self, request, *args, **kwargs):
-        customers = self.get_queryset()
-        serializer = CustomerSerializer(customers, many=True)
-        return Response(serializer.data)
+    # def list(self, request, *args, **kwargs):
+    #     customers = self.get_queryset()
+    #     serializer = CustomerSerializer(customers, many=True)
+    #     return Response(serializer.data)
 
     def retrieve(self, request, *args, **kwargs):
         customer = self.get_object()
