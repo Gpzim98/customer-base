@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from rest_framework.filters import SearchFilter
+from rest_framework.filters import SearchFilter, OrderingFilter
 from django.http.response import HttpResponseForbidden, HttpResponseNotAllowed
 from django_filters.rest_framework import DjangoFilterBackend
 
@@ -22,9 +22,11 @@ from .serializers import (
 
 class CustomerViewSet(viewsets.ModelViewSet):
     serializer_class = CustomerSerializer
-    filter_backends = [DjangoFilterBackend, SearchFilter]
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ('name', )
     search_fields = ['name', 'address', 'data_sheet__description']
+    ordering_fields = '__all__'
+    ordering = ('-id', )
 
     def get_queryset(self):
         address = self.request.query_params.get('address', None)
