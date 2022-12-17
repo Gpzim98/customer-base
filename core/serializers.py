@@ -10,7 +10,8 @@ from .models import (
 class CustomerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Customer
-        fields = ['id', 'name', 'address', 'professions', 'data_sheet', 'active']
+        fields = ['id', 'name', 'address', 'professions', 'data_sheet',
+                  'active', 'status_messege']
 
 
 class ProfessionSerializer(serializers.ModelSerializer):
