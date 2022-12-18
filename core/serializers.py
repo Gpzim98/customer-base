@@ -8,10 +8,15 @@ from .models import (
 
 
 class CustomerSerializer(serializers.ModelSerializer):
+    num_professions = serializers.SerializerMethodField()
+
     class Meta:
         model = Customer
         fields = ['id', 'name', 'address', 'professions', 'data_sheet',
-                  'active', 'status_messege']
+                  'active', 'status_messege', 'num_professions']
+
+    def get_num_professions(self, obj):
+        return obj.num_professions()
 
 
 class ProfessionSerializer(serializers.ModelSerializer):
