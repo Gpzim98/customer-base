@@ -9,7 +9,7 @@ from .models import (
 
 class CustomerSerializer(serializers.ModelSerializer):
     num_professions = serializers.SerializerMethodField()
-    data_sheet = serializers.SerializerMethodField()
+    data_sheet = serializers.PrimaryKeyRelatedField(read_only=True)
     professions = serializers.StringRelatedField(many=True)
     document_set = serializers.StringRelatedField(many=True)
 
