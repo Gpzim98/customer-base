@@ -9,14 +9,20 @@ from .models import (
 
 class CustomerSerializer(serializers.ModelSerializer):
     num_professions = serializers.SerializerMethodField()
+    data_sheet = serializers.SerializerMethodField()
+    professions = serializers.StringRelatedField(many=True)
+    document_set = serializers.StringRelatedField(many=True)
 
     class Meta:
         model = Customer
         fields = ['id', 'name', 'address', 'professions', 'data_sheet',
-                  'active', 'status_messege', 'num_professions']
+                  'active', 'status_messege', 'num_professions', 'document_set']
 
     def get_num_professions(self, obj):
         return obj.num_professions()
+
+    def get_data_sheet(self, obj):
+        return obj.data_sheet.description
 
 
 class ProfessionSerializer(serializers.ModelSerializer):
