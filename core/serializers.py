@@ -12,6 +12,8 @@ class DocumentSerializer(serializers.ModelSerializer):
         model = Document
         fields = ['id', 'dtype', 'doc_number', 'customer']
 
+        read_only_fields = ['customer']
+
 
 class DataSheetSerializer(serializers.ModelSerializer):
     class Meta:
@@ -29,7 +31,7 @@ class CustomerSerializer(serializers.ModelSerializer):
     num_professions = serializers.SerializerMethodField()
     data_sheet = DataSheetSerializer(read_only=True)
     professions = ProfessionSerializer(many=True)
-    document_set = DocumentSerializer(many=True, read_only=True)
+    document_set = DocumentSerializer(many=True)
 
     class Meta:
         model = Customer
@@ -40,7 +42,17 @@ class CustomerSerializer(serializers.ModelSerializer):
         professions = validated_data['professions']
         del validated_data['professions']
 
+        document_set = validated_data['document_set']
+        del validated_data['document_set']
+
         customer = Customer.objects.create(**validated_data)
+
+        for doc in document_set:
+            Document.objects.create(
+                dtype=doc['dtype'],
+                doc_number=doc['doc_number'],
+                customer_id=customer.id
+            )
 
         for profession in professions:
             prof = Profession.objects.create(**profession)
